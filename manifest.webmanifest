@@ -11,7 +11,7 @@
   "theme_color": "#070812",
   "icons": [
     {
-      "src": "assets/sonory-logo.svg",
+      "src": "assets/app-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
