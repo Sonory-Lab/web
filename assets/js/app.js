@@ -40,3 +40,13 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installProm
 $('install').onclick=async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('install').style.display='none'};
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 loadTracks();
+
+
+// Protección disuasoria de interfaz (no sustituye controles de acceso del servidor).
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea'))e.preventDefault()});
+document.addEventListener('dragstart',e=>{if(!e.target.closest('input,textarea'))e.preventDefault()});
+document.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if((e.ctrlKey||e.metaKey)&&['s','u','p'].includes(k)){e.preventDefault();status('Esta acción está deshabilitada en la interfaz');}
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k))){e.preventDefault();status('Acceso directo deshabilitado en la interfaz');}
+});
