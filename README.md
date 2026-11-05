@@ -10,4 +10,4 @@ Lee la [documentación completa](docs/PLATFORM.md) para conocer formatos, contro
 
 ## Identidad oficial
 
-El recurso `assets/sonory-logo.svg` se utiliza en la portada, la pantalla de bienvenida, la cabecera y el favicon.
+El recurso `assets/sonory-logo.svg` se utiliza en la portada, la pantalla de bienvenida y la cabecera. El icono cuadrado `assets/app-icon.svg` se utiliza como favicon y para la instalación PWA.
