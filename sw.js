@@ -1,7 +1,7 @@
-const CACHE_VERSION = "sonory-lab-v1";
+const CACHE_VERSION = "sonory-lab-v2";
 const APP_CACHE = CACHE_VERSION + "-app";
 const MUSIC_CACHE = CACHE_VERSION + "-music";
-const APP_FILES = ["./", "./index.html", "./manifest.webmanifest", "./assets/sonory-logo.svg", "./assets/app-icon.svg"];
+const APP_FILES = ["./", "./index.html", "./manifest.webmanifest", "./assets/sonory-logo.svg", "./assets/app-icon.svg", "./assets/css/app.css", "./assets/js/app.js"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(APP_CACHE).then(cache => cache.addAll(APP_FILES)).then(() => self.skipWaiting()));
