@@ -7,16 +7,21 @@ Sonory Lab es una web musical estática diseñada para GitHub Pages. Incluye una
 ## Estructura del repositorio
 
 ```text
-/
+├── assets/
+│   ├── css/
+│   │   └── app.css
+│   ├── js/
+│   │   └── app.js
+│   ├── app-icon.svg
+│   └── sonory-logo.svg
+├── docs/
+│   └── PLATFORM.md
+├── music/
 ├── index.html
 ├── manifest.webmanifest
 ├── sw.js
-├── assets/
-│   ├── sonory-logo.svg\n│   └── app-icon.svg
-├── music/
-│   └── (tus archivos de audio y subcarpetas)
-└── docs/
-    └── PLATFORM.md
+├── README.md
+└── SECURITY.md
 ```
 
 ## Añadir canciones
