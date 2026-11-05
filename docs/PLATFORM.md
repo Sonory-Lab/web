@@ -12,7 +12,7 @@ Sonory Lab es una web musical estática diseñada para GitHub Pages. Incluye una
 ├── manifest.webmanifest
 ├── sw.js
 ├── assets/
-│   └── sonory-logo.svg
+│   ├── sonory-logo.svg\n│   └── app-icon.svg
 ├── music/
 │   └── (tus archivos de audio y subcarpetas)
 └── docs/
@@ -54,7 +54,7 @@ La opción **Efectos** activa pequeños tonos de interfaz sintetizados con Web A
 
 La plataforma incluye `manifest.webmanifest` y `sw.js`. Debe servirse mediante HTTPS (GitHub Pages y el dominio personalizado lo proporcionan habitualmente). En navegadores compatibles aparece **Instalar app** cuando el navegador considera que se cumplen sus condiciones de instalación.
 
-El service worker almacena la interfaz y el logotipo para abrir la aplicación sin conexión. Los archivos de audio se guardan en caché cuando se solicitan; para reproducirlos offline, cada pista debe haberse cargado al menos una vez mientras había conexión. La biblioteca se conserva localmente como respaldo si la API de GitHub no está disponible.
+El service worker almacena la interfaz, la portada SVG y el icono cuadrado para abrir la aplicación sin conexión. Los archivos de audio se guardan en caché cuando se solicitan; para reproducirlos offline, cada pista debe haberse cargado al menos una vez mientras había conexión. La biblioteca se conserva localmente como respaldo si la API de GitHub no está disponible.
 
 ## Privacidad y almacenamiento local
 
@@ -64,7 +64,7 @@ No se necesita cuenta ni se envían favoritos o ajustes a un servidor. La lista 
 
 - Añadir canciones no requiere editar código.
 - Cambios de diseño se realizan en `index.html`.
-- Identidad visual: sustituir `assets/sonory-logo.svg` y mantener su ruta para actualizar pantalla de bienvenida, portada, cabecera y favicon.
+- Portada y marca: sustituir `assets/sonory-logo.svg` para actualizar la pantalla de bienvenida, la portada y la cabecera. El icono cuadrado `assets/app-icon.svg` se usa como favicon y en el manifiesto PWA.
 - Configuración PWA: `manifest.webmanifest` y `sw.js`.
 - Tras publicar una actualización, el navegador puede conservar recursos de caché; cerrar y volver a abrir la app o recargarla permite obtener la versión más reciente.
 
