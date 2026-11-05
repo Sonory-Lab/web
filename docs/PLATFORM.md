@@ -56,6 +56,14 @@ La plataforma incluye `manifest.webmanifest` y `sw.js`. Debe servirse mediante H
 
 El service worker almacena la interfaz, la portada SVG y el icono cuadrado para abrir la aplicación sin conexión. Los archivos de audio se guardan en caché cuando se solicitan; para reproducirlos offline, cada pista debe haberse cargado al menos una vez mientras había conexión. La biblioteca se conserva localmente como respaldo si la API de GitHub no está disponible.
 
+## Seguridad y protección de contenidos
+
+La interfaz incorpora una política CSP mediante meta tag, limita conexiones a GitHub API y raw.githubusercontent.com, bloquea objetos incrustados, fija la política de referencia, desactiva permisos de cámara/micrófono/geolocalización y valida las pistas recuperadas de caché. Los enlaces externos usan `noopener noreferrer`. La UI añade disuasión básica frente a menú contextual, arrastre y algunos atajos de guardar/imprimir/ver código.
+
+**Límite importante:** esta web es estática y sus archivos se publican desde un repositorio GitHub Pages. Si el repositorio y los audios son públicos, una persona puede obtener el HTML, CSS, JavaScript y las URL de audio mediante herramientas del navegador, peticiones HTTP o GitHub. Deshabilitar clic derecho o atajos no impide capturas, grabación de audio, inspección, descargas técnicas ni copias. Tampoco existe DRM ni protección real de archivos en una web estática.
+
+Para proteger de verdad el audio original y el código privado se necesita cambiar la arquitectura: mantener el repositorio privado, servir audio mediante un backend autenticado con URLs firmadas y caducables, aplicar límites de acceso y, si la licencia lo permite, un sistema DRM compatible con navegadores. El código entregado al navegador siempre puede inspeccionarse. GitHub Pages por sí solo no proporciona autenticación de usuarios ni control de acceso a archivos individuales.
+
 ## Privacidad y almacenamiento local
 
 No se necesita cuenta ni se envían favoritos o ajustes a un servidor. La lista de favoritas, las preferencias de efectos y el volumen se guardan en el almacenamiento local del dispositivo. La lista de canciones también se conserva como caché local de metadatos.
