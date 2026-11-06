@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111a31"><meta name="description" content="Workspace privado para campañas de marketing multicanal.">
+<title>NEXO Marketing — Workspace</title>
+<link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="brand"><b class="brand-mark">N</b><span><strong>NEXO</strong><small>MARKETING WORKSPACE</small></span></div>
+    <p class="eyebrow">TU CENTRO DE CRECIMIENTO</p><h1>Todo tu marketing.<br><em>En un solo lugar.</em></h1>
+    <p class="muted intro">Organiza campañas, prepara publicaciones y coordina tus canales desde un solo espacio.</p>
+    <form id="loginForm"><label for="password">Contraseña de administrador</label><input id="password" type="password" autocomplete="current-password" required placeholder="Introduce tu contraseña"><button class="primary wide" type="submit">Entrar al workspace →</button><p id="loginError" class="error" role="alert"></p></form>
+    <small class="login-note">Acceso privado · Sesión protegida</small>
+  </div>
+  <div class="login-art"><div class="art-inner"><p class="eyebrow">CAMPAÑAS CONECTADAS</p><div class="orbit">● ─── ● ─── ●</div><h2>Una idea.<br>Todos tus canales.</h2><p>Planifica, publica y mide tu comunicación digital sin perder el hilo.</p><div class="chips"><span>WhatsApp</span><span>Telegram</span><span>Facebook</span><span>Instagram</span><span>Messenger</span></div></div></div>
+</div>
+
+<div id="appShell" class="shell" hidden>
+<aside id="sidebar" class="sidebar">
+  <div class="brand sidebar-brand"><b class="brand-mark">N</b><span><strong>NEXO</strong><small>MARKETING WORKSPACE</small></span></div>
+  <p class="nav-label">WORKSPACE</p>
+  <nav>
+    <button class="nav active" data-view="overview">⌂ <span>Resumen</span></button>
+    <button class="nav" data-view="campaigns">▤ <span>Campañas</span></button>
+    <button class="nav" data-view="calendar">▦ <span>Calendario</span></button>
+    <button class="nav" data-view="integrations">⌘ <span>Canales e integraciones</span></button>
+    <button class="nav" data-view="guide">◈ <span>Centro de ayuda</span></button>
+  </nav>
+  <div class="sidebar-bottom"><div class="tip"><b>✦ Un flujo más claro</b><p>Prepara el contenido y adapta cada campaña al canal correcto.</p></div><button id="logout" class="logout">↪ Cerrar sesión</button><small class="version">NEXO · v1.0</small></div>
+</aside>
+
+<div class="main">
+<header class="topbar"><div class="top-left"><button id="menuToggle" class="icon mobile-menu">☰</button><span class="crumb">Workspace /</span><strong id="pageTitle">Resumen</strong></div><div class="top-actions"><span class="private"><i></i> Panel privado</span><button id="refresh" class="icon" title="Actualizar" aria-label="Actualizar">↻</button><button class="primary" data-new>＋ Nueva campaña</button><b class="avatar">N</b></div></header>
+<main class="content">
+<section id="view-overview" class="view active">
+  <div class="heading"><div><p class="eyebrow">CENTRO DE CONTROL</p><h1>Tu marketing, <em>en movimiento.</em></h1><p class="muted">Planifica campañas y coordina tus canales desde una sola vista.</p></div><button class="primary" data-new>＋ Crear campaña</button></div>
+  <div class="stats">
+    <article><small>Campañas totales</small><strong id="metricTotal">0</strong><span>Registradas en el workspace</span></article>
+    <article><small>Programadas</small><strong id="metricScheduled">0</strong><span>En cola de publicación</span></article>
+    <article><small>Publicadas</small><strong id="metricPublished">0</strong><span>Enviadas correctamente</span></article>
+    <article><small>Requieren atención</small><strong id="metricAttention">0</strong><span>Fallos o resultados parciales</span></article>
+  </div>
+  <div class="overview-grid">
+    <section class="panel"><div class="panel-head"><div><p class="eyebrow">ACTIVIDAD</p><h2>Campañas recientes</h2></div><button class="link" data-go="campaigns">Ver todas →</button></div><div id="recent" class="recent"></div></section>
+    <section class="panel"><div class="panel-head"><div><p class="eyebrow">DISTRIBUCIÓN</p><h2>Tus canales</h2></div><button class="icon" data-go="integrations">↗</button></div><div id="channelOverview" class="channel-list"></div><button class="secondary wide" data-go="integrations">Gestionar integraciones</button></section>
+  </div>
+  <section class="panel next-panel"><div class="panel-head"><div><p class="eyebrow">SIGUIENTE PASO</p><h2>Tu próxima publicación</h2></div><span class="tag">Automatización</span></div><div id="nextCampaign" class="next"></div></section>
+</section>
+
+<section id="view-campaigns" class="view">
+  <div class="heading"><div><p class="eyebrow">CONTENIDO Y DISTRIBUCIÓN</p><h1>Campañas</h1><p class="muted">Crea, revisa y publica mensajes en tus canales conectados.</p></div><button class="primary" data-new>＋ Nueva campaña</button></div>
+  <div class="filters"><div><button class="filter active" data-filter="all">Todas</button><button class="filter" data-filter="scheduled">Programadas</button><button class="filter" data-filter="draft">Borradores</button><button class="filter" data-filter="published">Publicadas</button><button class="filter" data-filter="attention">Incidencias</button></div><small id="campaignCount">0 campañas</small></div>
+  <div id="allCampaigns" class="campaign-grid"></div>
+</section>
+
+<section id="view-calendar" class="view">
+  <div class="heading"><div><p class="eyebrow">PLANIFICACIÓN EDITORIAL</p><h1>Calendario</h1><p class="muted">Visualiza las campañas pendientes de publicación.</p></div><button class="primary" data-new>＋ Programar publicación</button></div>
+  <section class="panel"><div class="panel-head"><div><p class="eyebrow">PRÓXIMAS FECHAS</p><h2>Agenda de campañas</h2></div><span class="tag">Hora del servidor</span></div><div id="calendarList"></div></section>
+</section>
+
+<section id="view-integrations" class="view">
+  <div class="heading"><div><p class="eyebrow">CONECTIVIDAD</p><h1>Canales e integraciones</h1><p class="muted">Activa la publicación automatizada con tus credenciales oficiales.</p></div></div>
+  <div class="banner"><b>⌘</b><div><strong>Conexiones privadas y protegidas</strong><p>Los tokens se guardan en el servidor y nunca se muestran en el navegador.</p></div></div>
+  <div id="integrationGrid" class="integration-grid"></div>
+  <section class="panel note"><strong>¿Necesitas conectar una cuenta?</strong><p>Consulta los permisos, tokens y requisitos de cada plataforma en el Centro de ayuda.</p><button class="link" data-go="guide">Ver guía de configuración →</button></section>
+</section>
+
+<section id="view-guide" class="view">
+  <div class="heading"><div><p class="eyebrow">CONFIGURACIÓN Y BUENAS PRÁCTICAS</p><h1>Centro de ayuda</h1><p class="muted">Prepara tus cuentas y publica respetando las reglas de cada plataforma.</p></div></div>
+  <div class="guide-grid">
+    <article class="guide"><b>01</b><h2>Configura el servidor</h2><p>Instala dependencias, copia <code>.env.example</code> como <code>.env</code> y define una contraseña robusta. Añade los identificadores y tokens de las cuentas oficiales.</p></article>
+    <article class="guide"><b>02</b><h2>Autoriza tus cuentas</h2><p>Registra una aplicación de Meta y solicita los permisos necesarios. En Telegram, crea un bot y añádelo como administrador del canal.</p></article>
+    <article class="guide"><b>03</b><h2>Prepara la campaña</h2><p>Escribe el contenido, selecciona canales, añade una imagen pública HTTPS cuando sea necesaria y establece una fecha. Guarda un borrador o programa su publicación.</p></article>
+    <article class="guide"><b>04</b><h2>Revisa los resultados</h2><p>Consulta el estado de cada canal. Una campaña puede quedar parcialmente publicada si una red rechaza el contenido o la conexión necesita renovarse.</p></article>
+  </div>
+  <section class="panel policy"><div class="panel-head"><div><p class="eyebrow">PUBLICACIÓN RESPONSABLE</p><h2>Importante antes de automatizar</h2></div><span class="tag">Revisión obligatoria</span></div>
+    <ul>
+      <li><b>Facebook:</b> la publicación automática se realiza en Páginas, no en perfiles personales.</li>
+      <li><b>Instagram:</b> requiere una cuenta profesional y permisos de publicación. Esta versión publica imágenes individuales con texto.</li>
+      <li><b>WhatsApp:</b> no es un feed público. Envía mensajes con plantillas aprobadas a contactos que dieron consentimiento. Las plantillas de marketing para números +1 están sujetas a restricciones específicas.</li>
+      <li><b>Messenger:</b> requiere una Página, permisos y destinatarios elegibles. Esta versión limita los envíos a la ventana de mensajería confirmada.</li>
+      <li><b>Telegram:</b> el bot debe estar añadido al canal o grupo con permisos adecuados y no puede iniciar por sí mismo chats privados.</li>
+      <li><b>Todos los canales:</b> respeta políticas anti-spam, bajas, preferencias y legislación aplicable. No uses listas de contactos sin autorización.</li>
+    </ul>
+  </section>
+  <section class="panel command"><div><p class="eyebrow">ARRANQUE LOCAL</p><h2>Ejecutar NEXO</h2><p>Desde la carpeta <code>marketing/</code>:</p></div><pre>npm install
+cp .env.example .env
+# Configura ADMIN_PASSWORD y los canales
+npm start</pre></section>
+</section>
+</main>
+<footer class="footer"><span>NEXO Marketing Workspace</span><span>Planifica con intención. Publica con criterio.</span></footer>
+</div>
+</div>
+
+<dialog id="campaignDialog">
+<form id="campaignForm">
+  <div class="dialog-head"><div><p class="eyebrow">NUEVA PUBLICACIÓN</p><h2>Crear campaña</h2><p>Define el mensaje y elige dónde distribuirlo.</p></div><button type="button" id="closeDialog" class="icon">×</button></div>
+  <div class="form-grid">
+    <label class="field full">Nombre interno<input id="campaignTitle" maxlength="120" required placeholder="Ej. Lanzamiento de temporada"></label>
+    <label class="field full">Texto de publicación<textarea id="campaignText" rows="4" maxlength="4000" required placeholder="Escribe el mensaje de tu campaña..."></textarea><small>Adapta el contenido a cada red. Evita mensajes engañosos o repetitivos.</small></label>
+    <label class="field full">URL pública de imagen (opcional)<input id="mediaUrl" type="url" placeholder="https://tudominio.com/imagen.jpg"><small>Instagram necesita una imagen HTTPS pública. Facebook y Telegram también admiten imágenes.</small></label>
+    <fieldset class="field full"><legend>Canales de distribución</legend><div class="channel-checks">
+      <label><input type="checkbox" name="channel" value="whatsapp"><i class="dot whatsapp">W</i>WhatsApp</label>
+      <label><input type="checkbox" name="channel" value="telegram"><i class="dot telegram">T</i>Telegram</label>
+      <label><input type="checkbox" name="channel" value="facebook"><i class="dot facebook">f</i>Facebook</label>
+      <label><input type="checkbox" name="channel" value="instagram"><i class="dot instagram">◎</i>Instagram</label>
+      <label><input type="checkbox" name="channel" value="messenger"><i class="dot messenger">M</i>Messenger</label>
+    </div></fieldset>
+    <label class="field full">Destinatarios WhatsApp / Messenger (separados por coma)<textarea id="destinations" rows="2" placeholder="+447700900123, 123456789012345"></textarea><small>WhatsApp: teléfono internacional E.164. Messenger: PSID. Para Messenger puedes usar el destinatario predeterminado del servidor.</small></label>
+    <div class="field full messaging-fields">
+      <label class="field">Plantilla aprobada de WhatsApp<input id="templateName" placeholder="promo_lanzamiento"></label>
+      <label class="field">Idioma<input id="templateLanguage" value="es"></label>
+      <label class="field full">Variables del cuerpo (separadas por coma)<input id="templateParams" placeholder="Nombre, oferta, fecha"><small>Deben coincidir con las variables de la plantilla aprobada en WhatsApp Manager.</small></label>
+    </div>
+    <label class="consent full"><input id="consentConfirmed" type="checkbox"><span>Confirmo que los destinatarios de WhatsApp y Messenger dieron su consentimiento para recibir estas comunicaciones.</span></label>
+    <label class="consent full"><input id="messengerWindowConfirmed" type="checkbox"><span>Confirmo que los destinatarios de Messenger están dentro de la ventana de mensajería permitida.</span></label>
+    <label class="field full">Programar fecha y hora (opcional)<input id="scheduleAt" type="datetime-local"><small>El servidor debe estar encendido cuando llegue la hora programada.</small></label>
+  </div>
+  <div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancelar</button><button id="saveCampaign" class="primary" type="submit">Guardar campaña →</button></div>
+  <p id="campaignError" class="error" role="alert"></p>
+</form>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="/app.js" defer></script>
+</body></html>

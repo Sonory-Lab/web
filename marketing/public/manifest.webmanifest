@@ -1,0 +1,11 @@
+{
+  "name": "NEXO Marketing Workspace",
+  "short_name": "NEXO",
+  "description": "Centro de control para campañas de marketing multicanal.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f8fb",
+  "theme_color": "#111a31",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
