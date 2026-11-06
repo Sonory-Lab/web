@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const express = require('express');
 const fs = require('node:fs/promises');
+const fsSync = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 
@@ -17,6 +18,17 @@ const CATALOG_FILE = path.join(DATA_DIR, 'catalog.json');
 const MANUAL_FILE = path.join(DATA_DIR, 'manual-tracks.json');
 const PROFILE_URL = `https://suno.com/@${encodeURIComponent(HANDLE)}`;
 const PROFILE_API_URL = (page) => `https://studio-api.prod.suno.com/api/profiles/${encodeURIComponent(HANDLE)}?playlists_sort_by=created_at&clips_sort_by=created_at&page=${page}`;
+const PUBLIC_HTML_PATH = path.join(__dirname, '..', 'public', 'index.html');
+const PUBLIC_HTML_SOURCE = fsSync.readFileSync(PUBLIC_HTML_PATH, 'utf8');
+function inlineCspHashes(tagName) {
+  const pattern = new RegExp(`<${tagName}\\\\b[^>]*>([\\\\s\\\\S]*?)<\\\\/\\${tagName}>`, 'gi');
+  return [...PUBLIC_HTML_SOURCE.matchAll(pattern)].map(([match, code]) =>
+    `'sha256-${crypto.createHash('sha256').update(code).digest('base64')}'`
+  );
+}
+const INLINE_SCRIPT_HASHES = inlineCspHashes('script');
+const INLINE_STYLE_HASHES = inlineCspHashes('style');
+
 
 app.disable('x-powered-by');
 app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
@@ -29,8 +41,9 @@ app.use((req, res, next) => {
     'Cross-Origin-Opener-Policy': 'same-origin',
     'Content-Security-Policy': [
       "default-src 'self'", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'none'",
-      "form-action 'self'", "script-src 'self'", "style-src 'self' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com", "img-src 'self' data: https:",
+      "form-action 'self'", `script-src 'self' ${INLINE_SCRIPT_HASHES.join(' ')} 'strict-dynamic'`,
+      `style-src 'self' ${INLINE_STYLE_HASHES.join(' ')}`, "style-src-attr 'none'",
+      "script-src-attr 'none'", "font-src 'self' data:", "img-src 'self' data: https:",
       "media-src 'self' https:", "connect-src 'self'"
     ].join('; ')
   });
@@ -41,7 +54,12 @@ app.use((req, res, next) => {
 });
 app.use(express.json({ limit: '48kb', strict: true }));
 app.use(express.static(path.join(__dirname, '..', 'public'), {
-  extensions: ['html'], etag: true, maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0
+  extensions: ['html'],
+  etag: true,
+  maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache');
+  }
 }));
 
 let lastGoodTracks = [];
@@ -249,7 +267,10 @@ app.delete('/api/admin/tracks/:id', requireSameOrigin, requireAdmin, async (req,
   const updated = manual.filter((track) => track.id !== req.params.id);
   await writeJson(MANUAL_FILE, updated); res.json({ tracks: updated });
 });
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'admin.html')));
+app.get(['/admin', '/admin/'], (req, res) => {
+  res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' });
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'index.html')));
 app.use((error, req, res, next) => {
   console.error('Error de servidor:', error.message);
