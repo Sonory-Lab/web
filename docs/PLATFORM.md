@@ -2,83 +2,89 @@
 
 ## Arquitectura
 
-Sonory Lab es una aplicación de servidor Node.js + Express. Express publica los archivos de `public/` y ofrece la API local bajo `/api/*`. El navegador no consulta directamente la API interna de Suno: solicita el catálogo al mismo servidor y este realiza la consulta externa.
+La interfaz de Sonory Lab está consolidada en un único documento: `public/index.html`. Este documento contiene HTML, CSS en un bloque `<style>` y JavaScript inline. Integra dos vistas:
 
-### Componentes
+- Sitio público en `/`.
+- Panel administrativo en `/admin`.
+
+El servidor Node.js + Express sigue siendo una parte independiente del proyecto. Publica el HTML, ejecuta las API, consulta Suno y protege las operaciones administrativas. No es posible mover estas responsabilidades al HTML sin exponer secretos y eliminar la persistencia del servidor.
+
+## Estructura
 
 | Ruta | Responsabilidad |
 |---|---|
-| `public/index.html` | Página pública |
-| `public/styles.css` | Estilos y diseño adaptable |
-| `public/app.js` | Catálogo, búsqueda, filtros, sincronización y reproductor |
-| `public/admin.html` | Interfaz del panel privado |
-| `public/admin.css` | Estilos del panel |
-| `public/admin.js` | Inicio de sesión y gestión de entradas manuales |
-| `public/assets/` | Logotipo e icono SVG servidos al navegador |
-| `public/manifest.webmanifest` | Metadatos PWA |
-| `public/sw.js` | Caché del shell PWA |
-| `server/index.js` | API, sincronización, persistencia y medidas de seguridad |
+| `public/index.html` | Documento único de interfaz, estilos, lógica pública y panel admin |
+| `public/manifest.webmanifest` | Nombre, icono y configuración de instalación PWA |
+| `public/sw.js` | Caché offline del documento y recursos estáticos |
+| `public/assets/sonory-logo.svg` | Logotipo de la plataforma |
+| `public/assets/app-icon.svg` | Favicon e icono PWA |
+| `server/index.js` | Servidor, API, sincronización, persistencia y seguridad |
 | `data/catalog.json` | Último catálogo público correcto |
-| `data/manual-tracks.json` | Enlaces públicos añadidos en el panel |
+| `data/manual-tracks.json` | Enlaces manuales del panel |
+| `scripts/check-inline.js` | Valida la sintaxis JavaScript inline |
+| `docs/DEPLOYMENT.md` | Instrucciones de publicación |
 
-Los JSON de `data/` se generan en ejecución y están excluidos del control de versiones.
+Los JSON de `data/` se generan en ejecución y se excluyen de Git.
+
+## Selección de vista
+
+Un pequeño script del `head` detecta la ruta `/admin` y añade la clase `admin-route` al elemento HTML. El CSS muestra exclusivamente la vista correspondiente. El script de aplicación ejecuta la lógica pública o la lógica administrativa según esa misma ruta.
+
+Las dos vistas comparten el documento pero mantienen sus formularios y lógica de cliente separados en bloques de código dentro de él.
+
+## Política CSP para código inline
+
+El servidor lee `public/index.html` al iniciar. Extrae los bloques `<script>` y `<style>`, calcula sus hashes SHA-256 en Base64 y los incluye en `script-src` y `style-src`. Así se permite únicamente el código inline exacto que forma parte de la versión publicada, sin usar `unsafe-inline`.
+
+**Importante:** si editas el HTML inline, reinicia o vuelve a desplegar el servidor para que vuelva a calcular los hashes.
 
 ## Rutas HTTP
 
 | Método | Ruta | Descripción | Acceso |
 |---|---|---|---|
 | GET | `/` | Sitio público | Público |
-| GET | `/admin` | Panel privado | Inicio de sesión |
-| GET | `/healthz` | Health check del hosting | Público |
+| GET | `/admin` y `/admin/` | Vista administrativa del mismo HTML | Inicio de sesión |
+| GET | `/healthz` | Estado del servicio | Público |
 | GET | `/api/catalog` | Catálogo y estado de sincronización | Público |
 | POST | `/api/sync` | Solicita sincronización manual con cooldown | Público |
-| GET | `/api/admin/status` | Estado de configuración/sesión | Público |
+| GET | `/api/admin/status` | Estado de configuración y sesión | Público |
 | POST | `/api/admin/login` | Inicio de sesión | Mismo origen |
 | POST | `/api/admin/logout` | Cierre de sesión | Administrador |
 | GET | `/api/admin/tracks` | Lista entradas manuales | Administrador |
-| POST | `/api/admin/tracks` | Añade/actualiza enlace público de Suno | Administrador |
+| POST | `/api/admin/tracks` | Añade o actualiza enlace público | Administrador |
 | DELETE | `/api/admin/tracks/:id` | Elimina una entrada manual | Administrador |
 
-## Catálogo y sincronización
+## Rendimiento y adaptación
 
-1. `/api/catalog` comprueba si el caché está vencido.
-2. El servidor consulta hasta ocho páginas del perfil público.
-3. Normaliza ID, título, imagen, audio, etiquetas, duración y fecha.
-4. Deduplica por ID y ordena por fecha.
-5. Guarda el último catálogo correcto de forma atómica.
-6. Combina las publicaciones públicas con entradas manuales.
+- CSS y JavaScript frontend se cargan dentro del único HTML, eliminando las cuatro solicitudes de los archivos frontend independientes.
+- Se sustituyeron las fuentes web externas por pilas de fuentes del sistema para evitar solicitudes a proveedores de tipografía.
+- Las portadas del catálogo usan carga diferida y decodificación asíncrona.
+- La sincronización periódica se reduce a una consulta cada dos minutos y se omite en intervalos en los que la página no está visible.
+- Se añaden ajustes para teléfonos estrechos, orientación horizontal, áreas seguras y movimiento reducido.
+- El service worker usa un nombre de caché nuevo para no reutilizar la estructura anterior.
 
-Las solicitudes simultáneas de sincronización comparten la misma promesa. Las peticiones manuales tienen un período de enfriamiento para evitar llamadas repetidas.
+## API y sincronización de Suno
 
-Si la fuente externa falla, la respuesta conserva el estado del último catálogo correcto. La interfaz distingue catálogo actualizado, caché anterior y error de conexión.
+1. `/api/catalog` comprueba si el caché expiró.
+2. El servidor consulta páginas públicas del perfil.
+3. Normaliza ID, título, portada, audio, etiquetas, duración y fecha.
+4. Deduplica por ID, conserva el último catálogo correcto y combina las entradas manuales.
+5. La interfaz actualiza la lista pública.
+
+La integración no es una API oficial documentada y puede cambiar. Si falla, se conserva el último catálogo válido. No se accede a contenido privado ni Link Only.
 
 ## Reproductor
 
-El reproductor aparece cuando la fuente entrega una URL HTTPS de audio. Si no existe una URL reproducible, la tarjeta ofrece un enlace a la publicación pública en Suno. La compatibilidad de reproducción depende del códec admitido por el navegador.
+El reproductor aparece cuando la fuente ofrece una URL HTTPS de audio. Si no hay audio disponible, la tarjeta ofrece un enlace para escuchar en Suno. La reproducción depende de los códecs y las políticas del navegador.
 
-La aplicación no descarga ni almacena copias locales de las canciones. La reproducción se realiza desde la URL pública proporcionada por la fuente.
+## Panel administrativo
 
-## Panel privado
-
-1. Define `ADMIN_PASSWORD` en el entorno del servidor.
-2. Abre `/admin`.
-3. Inicia sesión.
-4. Añade una URL `https://suno.com/song/...` y, si procede, título, estilos y portada.
-5. La entrada se almacena en `data/manual-tracks.json`.
-6. Usa «Cerrar sesión» para invalidar el token de esa sesión.
-
-Sin `ADMIN_PASSWORD`, las escrituras administrativas quedan deshabilitadas. No existe una contraseña predeterminada.
-
-## Persistencia
-
-El servidor crea `DATA_DIR` si no existe. En local usa `./data`. En hosting, configura `DATA_DIR` como punto de montaje de almacenamiento persistente. Si el sistema de archivos del proveedor es efímero, el catálogo se puede reconstruir desde Suno, pero las entradas manuales se perderán al reiniciar o desplegar.
+Configura `ADMIN_PASSWORD` en el entorno del servidor. Abre `/admin`, inicia sesión y añade enlaces `https://suno.com/song/...`. Los datos se guardan en `data/manual-tracks.json`. Sin la variable de entorno, las escrituras quedan deshabilitadas.
 
 ## PWA y modo sin conexión
 
-El manifiesto y el service worker permiten instalar la interfaz cuando el navegador cumple las condiciones de instalación. El service worker almacena el shell de la web y no intercepta las rutas `/api/*`.
+El manifiesto y el service worker permanecen como archivos separados y permiten instalar la plataforma. El service worker almacena el HTML unificado y los iconos; no intercepta la API. El catálogo necesita conexión y el modo offline no garantiza disponibilidad de audio Suno.
 
-El catálogo y la sincronización necesitan conexión. La caché PWA no implica que la música o las publicaciones de Suno estén disponibles offline.
+## Límite de la unificación
 
-## Integración de Suno
-
-La ruta consultada en `server/index.js` pertenece a una integración no oficial y puede cambiar sin previo aviso. Si deja de responder, se conserva el último catálogo guardado y se pueden mantener enlaces públicos manualmente. No se accede a contenido privado ni Link Only.
+La interfaz está unificada en HTML, pero el proyecto no puede convertirse íntegramente en un único HTML seguro: el servidor, la persistencia, las credenciales, la PWA y la configuración de despliegue requieren componentes separados.
