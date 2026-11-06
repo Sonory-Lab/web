@@ -3,7 +3,7 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-const html = fs.readFileSync('public/index.html', 'utf8');
+const html = fs.readFileSync('index.html', 'utf8');
 const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)];
 
 if (scripts.length < 2) {
@@ -12,7 +12,7 @@ if (scripts.length < 2) {
 
 for (let index = 0; index < scripts.length; index += 1) {
   new vm.Script(scripts[index][1], {
-    filename: 'public/index.html:inline-script-' + (index + 1),
+    filename: 'index.html:inline-script-' + (index + 1),
   });
 }
 
