@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07090d"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="strict-origin-when-cross-origin"><link rel="icon" type="image/svg+xml" href="/assets/app-icon.svg">
+  <title>Sonory Lab — Administración</title><link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/"><img class="brand-logo" src="/assets/sonory-logo.svg" alt="Sonory Lab"></a><span class="section-kicker">CONTROL ROOM / PRIVATE ACCESS</span><a class="suno-link" href="/">VOLVER AL SITIO ↗</a></header>
+  <main class="admin-shell">
+    <div class="admin-head"><div><div class="section-kicker">SONORY LAB / BACK OFFICE</div><h1>CATALOGUE CONTROL.</h1></div><a href="https://suno.com/@sonorylab" target="_blank" rel="noopener noreferrer">PERFIL SUNO ↗</a></div>
+    <section class="admin-card" id="loginCard"><h2>Acceso privado</h2><p>Inicia sesión con la contraseña configurada en la variable de entorno <code>ADMIN_PASSWORD</code>.</p><form class="admin-form" id="loginForm"><label for="password">CONTRASEÑA DE ADMINISTRACIÓN</label><input id="password" type="password" autocomplete="current-password" required><button type="submit">ACCEDER AL PANEL</button><div class="admin-message" id="loginMessage"></div></form></section>
+    <section class="admin-card" id="manageCard" hidden><div class="admin-top-actions"><h2 class="admin-flex-title">Añadir una canción pública</h2><button class="admin-button" id="logoutButton" type="button">CERRAR SESIÓN</button></div><p>El enlace debe tener el formato público <code>https://suno.com/song/…</code>. La portada y los estilos son opcionales.</p><form class="admin-form" id="trackForm"><label for="songUrl">URL PÚBLICA DE SUNO</label><input id="songUrl" type="url" placeholder="https://suno.com/song/…" required><label for="songTitle">TÍTULO</label><input id="songTitle" maxlength="180" placeholder="Nombre de la canción"><label for="songTags">ESTILOS (SEPARADOS POR COMAS)</label><input id="songTags" placeholder="phonk, techno, ambient"><label for="songImage">URL DE PORTADA (OPCIONAL)</label><input id="songImage" type="url" placeholder="https://…"><button type="submit">AÑADIR AL CATÁLOGO</button><div class="admin-message" id="trackMessage"></div></form><div class="admin-row"><h2 class="admin-no-margin">Entradas manuales</h2><button class="admin-button" type="button" id="refreshManual">ACTUALIZAR LISTA</button></div><div id="manualList" class="admin-manual-list"></div></section>
+    <p class="source-note">La sincronización automática consulta únicamente el perfil público. El panel no accede a canciones privadas ni modifica tu cuenta de Suno.</p>
+  </main>
+  <script src="/admin.js" defer></script>
+</body>
+</html>
