@@ -9,6 +9,11 @@
     "dev": "node --watch server/index.js",
     "check": "node --check server/index.js && node --check public/app.js && node --check public/admin.js"
   },
-  "engines": { "node": ">=18.18.0" },
-  "dependencies": { "express": "^4.21.2" }
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "dotenv": "^16.4.5"
+  }
 }
