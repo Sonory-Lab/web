@@ -21,5 +21,5 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install
-      - name: Validate JavaScript syntax
+      - name: Run syntax and HTTP smoke tests
         run: npm test
