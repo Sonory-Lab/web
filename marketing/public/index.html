@@ -58,7 +58,7 @@
 
 <section id="view-calendar" class="view">
   <div class="heading"><div><p class="eyebrow">PLANIFICACIÓN EDITORIAL</p><h1>Calendario</h1><p class="muted">Visualiza las campañas pendientes de publicación.</p></div><button class="primary" data-new>＋ Programar publicación</button></div>
-  <section class="panel"><div class="panel-head"><div><p class="eyebrow">PRÓXIMAS FECHAS</p><h2>Agenda de campañas</h2></div><span class="tag">Hora del servidor</span></div><div id="calendarList"></div></section>
+  <section class="panel"><div class="panel-head"><div><p class="eyebrow">PRÓXIMAS FECHAS</p><h2>Agenda de campañas</h2></div><span class="tag">Hora local del dispositivo</span></div><div id="calendarList"></div></section>
 </section>
 
 <section id="view-integrations" class="view">
@@ -110,7 +110,7 @@ npm start</pre></section>
       <label><input type="checkbox" name="channel" value="instagram"><i class="dot instagram">◎</i>Instagram</label>
       <label><input type="checkbox" name="channel" value="messenger"><i class="dot messenger">M</i>Messenger</label>
     </div></fieldset>
-    <label class="field full">Destinatarios WhatsApp / Messenger (separados por coma)<textarea id="destinations" rows="2" placeholder="+447700900123, 123456789012345"></textarea><small>WhatsApp: teléfono internacional E.164. Messenger: PSID. Para Messenger puedes usar el destinatario predeterminado del servidor.</small></label>
+    <label class="field full">Destinatarios de WhatsApp (teléfonos E.164)<textarea id="whatsappRecipients" rows="2" placeholder="+447700900123, +34911222333"></textarea><small>Introduce números con prefijo internacional. Solo se usarán para WhatsApp.</small></label><label class="field full">Destinatarios de Messenger (PSID)<textarea id="messengerRecipients" rows="2" placeholder="123456789012345"></textarea><small>Introduce PSID separados por coma. Puedes dejarlo vacío para usar el destinatario predeterminado del servidor.</small></label>
     <div class="field full messaging-fields">
       <label class="field">Plantilla aprobada de WhatsApp<input id="templateName" placeholder="promo_lanzamiento"></label>
       <label class="field">Idioma<input id="templateLanguage" value="es"></label>
