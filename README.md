@@ -56,7 +56,9 @@ La consulta usada por el servidor es una integración **no oficial**, no una API
 
 ```text
 .
-├── .github/\n│   └── workflows/ci.yml\n├── public/
+├── .github/
+│   └── workflows/ci.yml
+├── public/
 │   ├── assets/
 │   │   ├── app-icon.svg
 │   │   └── sonory-logo.svg
