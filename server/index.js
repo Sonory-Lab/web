@@ -21,7 +21,7 @@ const PROFILE_API_URL = (page) => `https://studio-api.prod.suno.com/api/profiles
 const PUBLIC_HTML_PATH = path.join(__dirname, '..', 'public', 'index.html');
 const PUBLIC_HTML_SOURCE = fsSync.readFileSync(PUBLIC_HTML_PATH, 'utf8');
 function inlineCspHashes(tagName) {
-  const pattern = new RegExp(`<${tagName}\\\\b[^>]*>([\\\\s\\\\S]*?)<\\\\/\\${tagName}>`, 'gi');
+  const pattern = new RegExp(`<${tagName}\\b[^>]*>([\\s\\S]*?)</${tagName}>`, 'gi');
   return [...PUBLIC_HTML_SOURCE.matchAll(pattern)].map(([match, code]) =>
     `'sha256-${crypto.createHash('sha256').update(code).digest('base64')}'`
   );
@@ -41,7 +41,7 @@ app.use((req, res, next) => {
     'Cross-Origin-Opener-Policy': 'same-origin',
     'Content-Security-Policy': [
       "default-src 'self'", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'none'",
-      "form-action 'self'", `script-src 'self' ${INLINE_SCRIPT_HASHES.join(' ')} 'strict-dynamic'`,
+      "form-action 'self'", `script-src 'self' ${INLINE_SCRIPT_HASHES.join(' ')}`,
       `style-src 'self' ${INLINE_STYLE_HASHES.join(' ')}`, "style-src-attr 'none'",
       "script-src-attr 'none'", "font-src 'self' data:", "img-src 'self' data: https:",
       "media-src 'self' https:", "connect-src 'self'"
