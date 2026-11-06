@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const express = require('express');
 const fs = require('node:fs/promises');
 const path = require('node:path');
