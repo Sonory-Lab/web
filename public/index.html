@@ -201,6 +201,7 @@ html:not(.admin-route) #adminExperience{display:none}
 </div>
 <script>'use strict';
 if (document.documentElement.classList.contains('admin-route')) {
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 'use strict';
 const $ = (id) => document.getElementById(id);
 const loginCard = $('loginCard');
