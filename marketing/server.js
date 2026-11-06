@@ -144,13 +144,13 @@ async function sendWhatsApp(c) {
   if (!c.consentConfirmed) throw new Error('Confirma el consentimiento de todos los destinatarios.');
   const templateName = clean(c.templateName || process.env.WA_TEMPLATE_NAME, 128);
   if (!templateName) throw new Error('Indica el nombre de una plantilla de WhatsApp aprobada.');
-  if (!c.destinations.length) throw new Error('Añade teléfonos en formato internacional E.164.');
+  if (!(c.whatsappRecipients || []).length) throw new Error('Añade teléfonos en formato internacional E.164.');
   const version = String(process.env.WA_API_VERSION || GRAPH).replace(/[^v0-9.]/g, '');
   const params = list(c.templateParams, 10, 512).map(text => ({ type: 'text', text }));
   const template = { name: templateName, language: { code: clean(c.templateLanguage || 'es', 16) } };
   if (params.length) template.components = [{ type: 'body', parameters: params }];
   const results = [];
-  for (const raw of c.destinations) {
+  for (const raw of (c.whatsappRecipients || [])) {
     const phone = raw.replace(/[^\d+]/g, '');
     if (!phone.startsWith('+') || phone.length < 8) {
       results.push({ destination: raw, ok: false, error: 'Número no válido: usa E.164.' });
@@ -180,7 +180,7 @@ async function sendMessenger(c) {
   if (!token) throw new Error('Configura MESSENGER_PAGE_ACCESS_TOKEN.');
   if (!c.consentConfirmed) throw new Error('Confirma el consentimiento de los destinatarios.');
   if (!c.messengerWindowConfirmed) throw new Error('Confirma que los destinatarios están dentro de la ventana permitida.');
-  const recipients = c.destinations.length ? c.destinations : [String(process.env.MESSENGER_DEFAULT_RECIPIENT || '')].filter(Boolean);
+  const recipients = (c.messengerRecipients || []).length ? c.messengerRecipients : [String(process.env.MESSENGER_DEFAULT_RECIPIENT || '')].filter(Boolean);
   if (!recipients.length) throw new Error('Añade un PSID de Messenger.');
   const results = [];
   for (const recipient of recipients) {
@@ -272,13 +272,13 @@ app.post('/api/campaigns', sameOrigin, async (req, res, next) => {
   try {
     const b = req.body || {}, title = clean(b.title, 120), text = clean(b.text);
     const channels = list(b.channels, 5, 24).filter(x => CHANNELS.includes(x));
-    const mediaUrl = clean(b.mediaUrl, 2048), destinations = list(b.destinations, 100, 128);
+    const mediaUrl = clean(b.mediaUrl, 2048), whatsappRecipients = list(b.whatsappRecipients, 100, 128), messengerRecipients = list(b.messengerRecipients, 100, 128);
     const scheduleAt = b.scheduleAt ? new Date(b.scheduleAt) : null;
     if (!title || !text || !channels.length) return res.status(400).json({ error: 'Añade nombre, contenido y al menos un canal.' });
     if (mediaUrl && !httpsUrl(mediaUrl)) return res.status(400).json({ error: 'La imagen debe tener una URL HTTPS pública.' });
     if (scheduleAt && (!Number.isFinite(scheduleAt.getTime()) || scheduleAt.getTime() <= Date.now())) return res.status(400).json({ error: 'La fecha programada debe estar en el futuro.' });
     const campaign = {
-      id: crypto.randomUUID(), title, text, channels, mediaUrl: mediaUrl || null, destinations,
+      id: crypto.randomUUID(), title, text, channels, mediaUrl: mediaUrl || null, whatsappRecipients, messengerRecipients,
       templateName: clean(b.templateName, 128), templateLanguage: clean(b.templateLanguage || 'es', 16),
       templateParams: list(b.templateParams, 10, 512), consentConfirmed: b.consentConfirmed === true,
       messengerWindowConfirmed: b.messengerWindowConfirmed === true,
