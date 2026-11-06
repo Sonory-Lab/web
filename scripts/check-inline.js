@@ -12,7 +12,7 @@ if (scripts.length < 2) {
 
 for (let index = 0; index < scripts.length; index += 1) {
   new vm.Script(scripts[index][1], {
-    filename: \`public/index.html:inline-script-\${index + 1}\`,
+    filename: 'public/index.html:inline-script-' + (index + 1),
   });
 }
 
@@ -24,4 +24,4 @@ if (/<script[^>]+src=["']\/(?:app|admin)\.js/.test(html) ||
   throw new Error('El documento todavía carga CSS o JavaScript frontend por separado.');
 }
 
-console.log(\`HTML unificado correcto: \${scripts.length} scripts inline.\`);
+console.log('HTML unificado correcto: ' + scripts.length + ' scripts inline.');
