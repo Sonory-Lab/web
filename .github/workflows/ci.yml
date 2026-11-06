@@ -22,4 +22,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Validate JavaScript syntax
-        run: npm run check
+        run: npm test
