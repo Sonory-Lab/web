@@ -276,7 +276,7 @@ app.get(['/admin', '/admin/'], (req, res) => {
   res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' });
   res.sendFile(PUBLIC_HTML_PATH);
 });
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'index.html')));
+app.get('*', (req, res) => res.status(404).type('text/plain').send('No encontrado'));
 app.use((error, req, res, next) => {
   console.error('Error de servidor:', error.message);
   if (res.headersSent) return next(error);
