@@ -1,108 +1,91 @@
 # Sonory Lab
 
-**Plataforma musical independiente** para explorar publicaciones públicas de Sonory Lab en Suno, consultar lanzamientos por estilo y escuchar las pistas cuando Suno ofrece una URL de audio reproducible.
+**Plataforma musical independiente** para explorar publicaciones públicas de Sonory Lab en Suno.
 
-Esta versión agrupa la **interfaz pública y el panel administrativo en un único documento HTML**: `public/index.html`. Los estilos y el JavaScript de ambas vistas están integrados dentro del HTML. El servidor Node.js sigue siendo necesario para la API, la sincronización con Suno y las operaciones protegidas del panel.
+Los archivos principales de la web están directamente en la **raíz del repositorio**, no dentro de `public/` ni de otra carpeta:
 
-## Qué incluye
+- `index.html`: sitio público y panel administrativo en un solo documento, con CSS y JavaScript integrados.
+- `server.js`: servidor Node.js, API, sincronización de Suno y seguridad.
+- `manifest.webmanifest` y `sw.js`: instalación PWA y caché offline.
+- `sonory-logo.svg` y `app-icon.svg`: identidad visual y favicon.
+- `package.json`: comandos y dependencias.
 
-- Documento HTML único para el sitio público y `/admin`.
-- Diseño responsive con navegación móvil, tarjetas por estilo y reproductor adaptable.
-- Catálogo público consultado desde el servidor.
-- Búsqueda, filtros y orden por título o fecha.
-- Reproducción de audio cuando la fuente proporciona una URL compatible.
-- Entradas manuales mediante el panel administrativo.
-- Caché del último catálogo correcto.
-- PWA con manifiesto y service worker independiente.
-- Content Security Policy con hashes de los estilos y scripts inline.
-- Cabeceras de seguridad, sesión administrativa, validación y límite de intentos.
+## Empezar
 
-## Vista previa local
-
-Requisitos: Node.js **18.18 o superior** y npm.
+Requisitos: Node.js 18.18+ y npm.
 
 ```bash
 npm install
 cp .env.example .env
 ```
 
-Define una contraseña larga y exclusiva en `ADMIN_PASSWORD` dentro de `.env`; después ejecuta:
+Configura una contraseña segura en `ADMIN_PASSWORD` dentro de `.env` y ejecuta:
 
 ```bash
 npm start
 ```
 
-Abre `http://localhost:3000`. El panel está en `http://localhost:3000/admin`.
+Visita `http://localhost:3000`. El panel privado se abre en `/admin`.
 
-## Estructura
+## Estructura visible del repositorio
 
 ```text
 .
-├── public/
-│   ├── index.html          # Único documento de interfaz (CSS + JS inline)
-│   ├── manifest.webmanifest
-│   ├── sw.js
-│   └── assets/
-│       ├── sonory-logo.svg
-│       └── app-icon.svg
-├── server/
-│   └── index.js            # API, Suno, administración y seguridad
-├── scripts/
-│   └── check-inline.js     # Validación de scripts inline
-├── data/                   # Persistencia de ejecución; no se versiona
-├── docs/
-│   ├── PLATFORM.md
-│   └── DEPLOYMENT.md
-├── .github/workflows/ci.yml
-├── .env.example
-├── .gitignore
+├── index.html
+├── server.js
+├── manifest.webmanifest
+├── sw.js
+├── sonory-logo.svg
+├── app-icon.svg
 ├── package.json
 ├── render.yaml
+├── .env.example
+├── .gitignore
 ├── README.md
-└── SECURITY.md
+├── SECURITY.md
+├── data/                    # datos runtime; excluidos de Git
+├── docs/                    # documentación de apoyo
+├── scripts/                 # comprobaciones automatizadas
+└── .github/workflows/       # CI
 ```
 
-## Configuración
+## Funciones
 
-| Variable | Función | Valor inicial |
-|---|---|---|
-| `PORT` | Puerto HTTP | `3000` |
-| `NODE_ENV` | Entorno | `development` |
-| `SUNO_PROFILE_HANDLE` | Perfil público de Suno, sin `@` | `sonorylab` |
-| `CACHE_TTL_SECONDS` | Tiempo mínimo entre sincronizaciones automáticas | `300` |
-| `ADMIN_PASSWORD` | Contraseña del panel | Sin valor; debe configurarse |
-| `DATA_DIR` | Directorio de JSON de ejecución | `./data` |
-| `TRUST_PROXY` | Confianza en proxy inverso | `false` |
+- Catálogo público del perfil Suno y sincronización desde el servidor.
+- Búsqueda, estilos, filtros y ordenación.
+- Reproductor para audios disponibles desde la fuente.
+- Entradas manuales de canciones mediante el panel `/admin`.
+- Catálogo cacheado cuando Suno no responde.
+- PWA instalable.
+- Diseño adaptable a móvil, tableta y escritorio.
+- CSP por hashes, sesión HttpOnly/SameSite, validación y limitación de intentos.
 
-No subas `.env`, contraseñas, tokens ni JSON privados a GitHub.
+## Variables de entorno
 
-## Cómo funciona el HTML único
+| Variable | Función |
+|---|---|
+| `PORT` | Puerto del servidor (3000 por defecto) |
+| `NODE_ENV` | Entorno de ejecución |
+| `SUNO_PROFILE_HANDLE` | Handle público de Suno |
+| `CACHE_TTL_SECONDS` | Caducidad de caché del catálogo |
+| `ADMIN_PASSWORD` | Contraseña requerida para el panel |
+| `DATA_DIR` | Carpeta persistente para datos JSON |
+| `TRUST_PROXY` | Habilitar solo detrás de proxy de confianza |
 
-- En `/` se muestra la experiencia musical.
-- En `/admin` se muestra el panel, utilizando el mismo HTML y su vista administrativa integrada.
-- El servidor calcula hashes SHA-256 de los bloques `<style>` y `<script>` y los autoriza en la política CSP. No habilita `unsafe-inline`.
-- Los recursos de PWA (manifiesto, service worker e iconos) permanecen separados porque el navegador los solicita como archivos específicos.
-- El servidor Node.js permanece separado porque el HTML no puede proteger secretos, persistir datos privados ni ejecutar las API de sincronización.
+No subas `.env`, credenciales ni datos privados a GitHub.
 
-## Desarrollo y validación
+## Validación
 
 ```bash
-npm run dev
 npm run check
 npm test
 ```
 
-La comprobación valida la sintaxis de `server/index.js` y compila los scripts inline. `npm test` añade una prueba HTTP del documento único, `/admin`, los hashes CSP y la sesión administrativa.
+GitHub Actions ejecuta las comprobaciones en cada push y Pull Request a `main`.
 
-## Catálogo y límites de Suno
+## Publicación
 
-El servidor consulta publicaciones que sean accesibles desde el perfil público de Suno. La integración utiliza una ruta no oficial y puede cambiar. Si no hay URL de audio reproducible, la tarjeta dirige a la publicación en Suno. No se accede a canciones privadas ni Link Only.
-
-## Despliegue
-
-Se necesita hosting que ejecute Node.js. GitHub Pages no ejecuta Express ni las rutas `/api/*`. El repositorio incluye `render.yaml` como punto de partida para Render.
-
-Consulta [Despliegue](docs/DEPLOYMENT.md), [Documentación técnica](docs/PLATFORM.md) y [Seguridad](SECURITY.md).
+La aplicación completa requiere hosting Node.js. GitHub Pages no ejecuta `server.js` ni sus API. El repositorio incluye `render.yaml` como configuración inicial para Render. Consulta [la guía de despliegue](docs/DEPLOYMENT.md).
 
 ## Perfiles oficiales
 
