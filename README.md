@@ -56,7 +56,7 @@ La consulta usada por el servidor es una integración **no oficial**, no una API
 
 ```text
 .
-├── public/
+├── .github/\n│   └── workflows/ci.yml\n├── public/
 │   ├── assets/
 │   │   ├── app-icon.svg
 │   │   └── sonory-logo.svg
@@ -90,6 +90,10 @@ npm run check
 ```
 
 `npm run check` valida la sintaxis de JavaScript del servidor, del sitio público y del panel.
+
+## Integración continua
+
+El workflow `.github/workflows/ci.yml` instala dependencias y ejecuta `npm run check` en cada push a `main` y en las Pull Requests dirigidas a `main`.
 
 ## Despliegue
 
