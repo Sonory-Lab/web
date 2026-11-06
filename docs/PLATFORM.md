@@ -22,6 +22,7 @@ El servidor Node.js + Express sigue siendo una parte independiente del proyecto.
 | `data/catalog.json` | Último catálogo público correcto |
 | `data/manual-tracks.json` | Enlaces manuales del panel |
 | `scripts/check-inline.js` | Valida la sintaxis JavaScript inline |
+| `scripts/smoke-test.js` | Comprueba las rutas HTTP, CSP y sesión admin |
 | `docs/DEPLOYMENT.md` | Instrucciones de publicación |
 
 Los JSON de `data/` se generan en ejecución y se excluyen de Git.
