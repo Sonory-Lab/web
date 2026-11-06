@@ -9,7 +9,7 @@ Crea una aplicación en Meta for Developers, autoriza una Página que administra
 Usa una cuenta profesional (Business o Creator) habilitada para publicación. Para este adaptador con Facebook Login, vincula la cuenta a una Página compatible. Configura `META_ACCESS_TOKEN` e `INSTAGRAM_USER_ID` y solicita `instagram_content_publish` y los permisos básicos que requiera tu flujo. Esta versión publica imágenes individuales con caption; el archivo debe tener una URL HTTPS pública. Reels, Stories y carruseles quedan fuera de este primer adaptador.
 
 ## WhatsApp Business Platform
-Configura Cloud API, el número de empresa y los permisos `whatsapp_business_messaging` y `whatsapp_business_management` que correspondan. Guarda `WA_ACCESS_TOKEN`, `WA_PHONE_NUMBER_ID` y, opcionalmente, `WA_TEMPLATE_NAME`. Los envíos de campañas utilizan plantillas aprobadas por WhatsApp Manager; el nombre, idioma y variables deben coincidir exactamente. Introduce teléfonos E.164 y envía únicamente a usuarios que dieron consentimiento. El MVP bloquea plantillas de marketing para números +1 debido a las restricciones de Meta; comprueba siempre la política actual antes de activar envíos. WhatsApp es mensajería directa, no un feed público.
+Configura Cloud API, el número de empresa y los permisos `whatsapp_business_messaging` y `whatsapp_business_management` que correspondan. Guarda `WA_ACCESS_TOKEN`, `WA_PHONE_NUMBER_ID` y, opcionalmente, `WA_TEMPLATE_NAME`. Los envíos de campañas utilizan plantillas aprobadas por WhatsApp Manager; el nombre, idioma y variables deben coincidir exactamente. Introduce los teléfonos E.164 en el campo específico de WhatsApp y envía únicamente a usuarios que dieron consentimiento. El MVP bloquea plantillas de marketing para números +1 debido a las restricciones de Meta; comprueba siempre la política actual antes de activar envíos. WhatsApp es mensajería directa, no un feed público.
 
 ## Telegram
 Crea un bot con `@BotFather`, añádelo al canal/grupo de destino y concédele permisos de publicación. Configura `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID` (ID de chat o @username de canal público). Un bot no puede iniciar por sí solo un chat privado con una persona que nunca lo haya iniciado.
@@ -37,7 +37,7 @@ Conecta una Página a una aplicación Meta, genera un Page Access Token y config
 
 ## Operación y límites
 
-Las plataformas pueden exigir revisión de aplicación, modo Live, permisos avanzados, verificación de empresa, renovación de tokens y límites de uso. Un error de un canal no oculta los resultados de otros canales. La programación depende de que el servicio esté ejecutándose. El motor usa la hora del servidor: confirma su zona horaria al desplegar.
+Las plataformas pueden exigir revisión de aplicación, modo Live, permisos avanzados, verificación de empresa, renovación de tokens y límites de uso. Un error de un canal no oculta los resultados de otros canales. La fecha se interpreta en la zona horaria local del dispositivo que crea la campaña y se guarda como instante UTC; el worker la ejecuta cuando ese instante llega. La programación depende de que el servicio esté ejecutándose.
 
 NEXO no administra la validez legal del consentimiento ni sincroniza las bajas. Valida la fuente del consentimiento, respeta las exclusiones y la legislación aplicable antes de publicar. Las políticas de cada plataforma pueden cambiar.
 
