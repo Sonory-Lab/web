@@ -55,7 +55,7 @@ function renderCard(item){
   const h=document.createElement('h3');h.textContent=item.title;const p=document.createElement('p');p.textContent=item.text.length>220?item.text.slice(0,220)+'…':item.text;
   card.append(head,h,p,channelTags(item.channels));
   if(item.scheduleAt){const time=document.createElement('small');time.className='scheduled-meta';time.textContent='Publicación prevista: '+dateText(item.scheduleAt);card.append(time);}
-  if(item.results?.some(x=>!x.ok)){const warn=document.createElement('small');warn.className='warning-meta';warn.textContent='Uno o más canales requieren revisión.';card.append(warn);}
+  if(item.results?.length){const details=document.createElement('div');details.className='result-list';item.results.forEach(result=>{const row=document.createElement('div');row.className='result-row '+(result.ok?'ok':'bad');const name=document.createElement('b');name.textContent=channels[result.channel]?.name||result.channel;const note=document.createElement('small');note.textContent=result.ok?(result.message||'Enviado correctamente'):(result.error||'Error de publicación');row.append(name,note);details.append(row);});card.append(details);}
   const actions=document.createElement('div');actions.className='card-actions';
   if(['draft','failed','partial'].includes(item.status)){const pub=document.createElement('button');pub.className='primary';pub.textContent='Publicar ahora';pub.addEventListener('click',()=>publish(item.id,pub));actions.append(pub);}
   if(['draft','failed'].includes(item.status)){const del=document.createElement('button');del.className='secondary';del.textContent='Eliminar';del.addEventListener('click',()=>removeCampaign(item.id));actions.append(del);}
@@ -148,7 +148,7 @@ async function saveCampaign(event){
   if(local){const d=new Date(local);if(Number.isNaN(d.getTime())){$('#campaignError').textContent='Fecha no válida.';return;}scheduleAt=d.toISOString();}
   const payload={
     title:$('#campaignTitle').value,text:$('#campaignText').value,mediaUrl:$('#mediaUrl').value,channels:selected,
-    destinations:$('#destinations').value.split(/[,;\n]/).map(x=>x.trim()).filter(Boolean),
+    whatsappRecipients:$('#whatsappRecipients').value.split(/[,;\n]/).map(x=>x.trim()).filter(Boolean),messengerRecipients:$('#messengerRecipients').value.split(/[,;\n]/).map(x=>x.trim()).filter(Boolean),
     templateName:$('#templateName').value,templateLanguage:$('#templateLanguage').value||'es',
     templateParams:$('#templateParams').value.split(',').map(x=>x.trim()).filter(Boolean),
     consentConfirmed:$('#consentConfirmed').checked,messengerWindowConfirmed:$('#messengerWindowConfirmed').checked,scheduleAt
