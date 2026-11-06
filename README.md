@@ -89,9 +89,10 @@ No subas `.env`, contraseñas, tokens ni JSON privados a GitHub.
 ```bash
 npm run dev
 npm run check
+npm test
 ```
 
-La comprobación valida la sintaxis de `server/index.js` y compila los scripts inline del documento HTML con el motor de JavaScript de Node.
+La comprobación valida la sintaxis de `server/index.js` y compila los scripts inline. `npm test` añade una prueba HTTP del documento único, `/admin`, los hashes CSP y la sesión administrativa.
 
 ## Catálogo y límites de Suno
 
