@@ -9,7 +9,7 @@ const port = 32000 + Math.floor(Math.random() * 20000);
 const origin = 'http://127.0.0.1:' + port;
 const dataDir = path.join(os.tmpdir(), 'sonory-lab-smoke-' + process.pid);
 const password = 'smoke-test-' + process.pid + '-OnlyForCI';
-const child = spawn(process.execPath, ['server/index.js'], {
+const child = spawn(process.execPath, ['server.js'], {
   cwd: process.cwd(),
   env: {
     ...process.env,
