@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "check": "node --check server/index.js && node scripts/check-inline.js"
+    "check": "node --check server/index.js && node scripts/check-inline.js",
+    "test": "npm run check && node scripts/smoke-test.js"
   },
   "engines": {
     "node": ">=18.18.0"
